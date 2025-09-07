@@ -13,18 +13,12 @@ import {
   Globe,
   FileText,
   Video,
-  Image,
-  Volume2
+  HelpCircle
 } from 'lucide-react';
+import { downloadService } from '../utils/downloadService';
 import './CourseDetail.css';
 
-const CourseDetail = () => {
-  const { id } = useParams();
-  const [course, setCourse] = useState(null);
-  const [selectedLesson, setSelectedLesson] = useState(0);
-  const [progress, setProgress] = useState(0);
-
-  const courses = [
+const courses = [
     {
       id: 1,
       title: "Basic Mathematics for Class 6",
@@ -36,7 +30,6 @@ const CourseDetail = () => {
       rating: 4.8,
       thumbnail: "🔢",
       isOffline: true,
-      lessons: 24,
       instructor: "Mrs. Priya Sharma",
       instructorBio: "Experienced mathematics teacher with 15+ years of experience in rural education.",
       fullDescription: "This course covers all essential mathematical concepts for Class 6 students. You'll learn about fractions, decimals, basic algebra, geometry, and practical applications of mathematics in daily life. The course includes interactive exercises, real-world examples, and step-by-step solutions.",
@@ -47,7 +40,7 @@ const CourseDetail = () => {
         "Apply mathematics in real-life situations",
         "Develop problem-solving skills"
       ],
-      lessons: [
+      courseLessons: [
         {
           id: 1,
           title: "Introduction to Numbers",
@@ -116,13 +109,19 @@ const CourseDetail = () => {
     }
   ];
 
+const CourseDetail = () => {
+  const { id } = useParams();
+  const [course, setCourse] = useState(null);
+  const [selectedLesson, setSelectedLesson] = useState(0);
+  const [progress, setProgress] = useState(0);
+
   useEffect(() => {
     const foundCourse = courses.find(c => c.id === parseInt(id));
     setCourse(foundCourse);
     
     if (foundCourse) {
-      const completedLessons = foundCourse.lessons.filter(lesson => lesson.isCompleted).length;
-      const totalLessons = foundCourse.lessons.length;
+      const completedLessons = foundCourse.courseLessons.filter(lesson => lesson.isCompleted).length;
+      const totalLessons = foundCourse.courseLessons.length;
       setProgress((completedLessons / totalLessons) * 100);
     }
   }, [id]);
@@ -147,6 +146,14 @@ const CourseDetail = () => {
         className={`star ${i < Math.floor(rating) ? 'filled' : ''}`}
       />
     ));
+  };
+
+  const handleDownloadCourse = async () => {
+    await downloadService.downloadCourse(course.id, course.title);
+  };
+
+  const handleDownloadLesson = async (lesson) => {
+    await downloadService.downloadLesson(lesson.id, lesson.title, lesson.type, course);
   };
 
   if (!course) {
@@ -210,8 +217,18 @@ const CourseDetail = () => {
                   <Play className="btn-icon" />
                   {progress > 0 ? 'Continue Course' : 'Start Course'}
                 </button>
+                <Link 
+                  to={`/quiz/${course.id}`}
+                  className="btn btn-secondary"
+                >
+                  <HelpCircle className="btn-icon" />
+                  Take Quiz
+                </Link>
                 {course.isOffline && (
-                  <button className="btn btn-secondary">
+                  <button 
+                    className="btn btn-secondary"
+                    onClick={handleDownloadCourse}
+                  >
                     <Download className="btn-icon" />
                     Download for Offline
                   </button>
@@ -276,7 +293,7 @@ const CourseDetail = () => {
               <section className="course-section">
                 <h2 className="section-title">Course Curriculum</h2>
                 <div className="lessons-list">
-                  {course.lessons.map((lesson, index) => (
+                  {course.courseLessons.map((lesson, index) => (
                     <div 
                       key={lesson.id} 
                       className={`lesson-item ${lesson.isCompleted ? 'completed' : ''} ${selectedLesson === index ? 'selected' : ''}`}
@@ -304,9 +321,71 @@ const CourseDetail = () => {
                         ) : (
                           <Play className="action-icon" />
                         )}
+                        <button 
+                          className="lesson-download-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownloadLesson(lesson);
+                          }}
+                          title="Download lesson"
+                        >
+                          <Download className="download-icon" />
+                        </button>
+                        {lesson.type === 'quiz' && (
+                          <Link 
+                            to={`/quiz/${course.id}`}
+                            className="lesson-quiz-btn"
+                            onClick={(e) => e.stopPropagation()}
+                            title="Take quiz"
+                          >
+                            <HelpCircle className="quiz-icon" />
+                          </Link>
+                        )}
                       </div>
                     </div>
                   ))}
+                </div>
+              </section>
+
+              {/* Quiz Section */}
+              <section className="course-section">
+                <h2 className="section-title">Course Quiz</h2>
+                <div className="quiz-section">
+                  <div className="quiz-info">
+                    <div className="quiz-icon">
+                      <HelpCircle className="icon" />
+                    </div>
+                    <div className="quiz-content">
+                      <h3 className="quiz-title">Test Your Knowledge</h3>
+                      <p className="quiz-description">
+                        Take the course quiz to test your understanding of the material. 
+                        The quiz includes multiple-choice questions covering all topics in this course.
+                      </p>
+                      <div className="quiz-meta">
+                        <div className="meta-item">
+                          <Clock className="meta-icon" />
+                          <span>10 minutes</span>
+                        </div>
+                        <div className="meta-item">
+                          <HelpCircle className="meta-icon" />
+                          <span>5 questions</span>
+                        </div>
+                        <div className="meta-item">
+                          <CheckCircle className="meta-icon" />
+                          <span>Multiple choice</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="quiz-actions">
+                    <Link 
+                      to={`/quiz/${course.id}`}
+                      className="btn btn-primary quiz-btn"
+                    >
+                      <HelpCircle className="btn-icon" />
+                      Start Quiz
+                    </Link>
+                  </div>
                 </div>
               </section>
             </div>
@@ -361,6 +440,22 @@ const CourseDetail = () => {
                 </div>
               </div>
 
+              {/* Quiz Access */}
+              <div className="sidebar-card">
+                <h3 className="sidebar-title">Course Quiz</h3>
+                <div className="quiz-sidebar-info">
+                  <HelpCircle className="quiz-sidebar-icon" />
+                  <p>Test your knowledge with our interactive quiz covering all course topics.</p>
+                  <Link 
+                    to={`/quiz/${course.id}`}
+                    className="btn btn-primary quiz-sidebar-btn"
+                  >
+                    <HelpCircle className="btn-icon" />
+                    Start Quiz
+                  </Link>
+                </div>
+              </div>
+
               {/* Offline Access */}
               {course.isOffline && (
                 <div className="sidebar-card">
@@ -368,7 +463,10 @@ const CourseDetail = () => {
                   <div className="offline-info">
                     <Globe className="offline-icon" />
                     <p>This course is available for offline learning. Download content to study without internet connection.</p>
-                    <button className="btn btn-secondary offline-btn">
+                    <button 
+                      className="btn btn-secondary offline-btn"
+                      onClick={handleDownloadCourse}
+                    >
                       <Download className="btn-icon" />
                       Download Course
                     </button>

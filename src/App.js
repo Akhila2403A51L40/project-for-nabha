@@ -7,8 +7,11 @@ import Home from './pages/Home';
 import Courses from './pages/Courses';
 import CourseDetail from './pages/CourseDetail';
 import Quiz from './pages/Quiz';
+import QuizList from './pages/QuizList';
+import QuizResults from './pages/QuizResults';
 import Progress from './pages/Progress';
 import About from './pages/About';
+import Downloads from './pages/Downloads';
 import './App.css';
 
 function App() {
@@ -22,8 +25,11 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/course/:id" element={<CourseDetail />} />
+              <Route path="/quizzes" element={<QuizList />} />
               <Route path="/quiz/:courseId" element={<Quiz />} />
+              <Route path="/quiz-results/:quizId" element={<QuizResults />} />
               <Route path="/progress" element={<Progress />} />
+              <Route path="/downloads" element={<Downloads />} />
               <Route path="/about" element={<About />} />
             </Routes>
           </main>

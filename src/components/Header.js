@@ -1,13 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, Menu, X, Globe, User, Trophy } from 'lucide-react';
+import { BookOpen, Menu, X, Globe, User, Trophy, Download, HelpCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { downloadManager } from '../utils/downloadManager';
 import './Header.css';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [downloadCount, setDownloadCount] = useState(0);
   const location = useLocation();
   const { language, changeLanguage, t } = useLanguage();
+
+  useEffect(() => {
+    const updateDownloadCount = () => {
+      const downloads = downloadManager.getDownloadedCourses();
+      setDownloadCount(downloads.length);
+    };
+
+    // Initial load
+    updateDownloadCount();
+
+    // Listen for storage changes (when downloads are added/removed)
+    const handleStorageChange = () => {
+      updateDownloadCount();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom events (for same-tab updates)
+    window.addEventListener('downloadsUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('downloadsUpdated', handleStorageChange);
+    };
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -51,6 +78,25 @@ const Header = () => {
             >
               <Trophy className="nav-icon" />
               {t('progress')}
+            </Link>
+            <Link 
+              to="/quizzes" 
+              className={`nav-link ${isActive('/quizzes') ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <HelpCircle className="nav-icon" />
+              Quizzes
+            </Link>
+            <Link 
+              to="/downloads" 
+              className={`nav-link ${isActive('/downloads') ? 'active' : ''}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Download className="nav-icon" />
+              Downloads
+              {downloadCount > 0 && (
+                <span className="download-badge">{downloadCount}</span>
+              )}
             </Link>
             <Link 
               to="/about" 

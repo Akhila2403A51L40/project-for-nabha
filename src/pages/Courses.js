@@ -8,18 +8,12 @@ import {
   Users, 
   Star,
   Play,
-  Download,
-  Globe
+  Download
 } from 'lucide-react';
+import { downloadService } from '../utils/downloadService';
 import './Courses.css';
 
-const Courses = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSubject, setSelectedSubject] = useState('all');
-  const [selectedLevel, setSelectedLevel] = useState('all');
-  const [filteredCourses, setFilteredCourses] = useState([]);
-
-  const subjects = [
+const subjects = [
     { value: 'all', label: 'All Subjects' },
     { value: 'mathematics', label: 'Mathematics' },
     { value: 'science', label: 'Science' },
@@ -29,14 +23,14 @@ const Courses = () => {
     { value: 'social-studies', label: 'Social Studies' }
   ];
 
-  const levels = [
+const levels = [
     { value: 'all', label: 'All Levels' },
     { value: 'primary', label: 'Primary (1-5)' },
     { value: 'middle', label: 'Middle (6-8)' },
     { value: 'secondary', label: 'Secondary (9-10)' }
   ];
 
-  const courses = [
+const courses = [
     {
       id: 1,
       title: "Basic Mathematics for Class 6",
@@ -123,6 +117,12 @@ const Courses = () => {
     }
   ];
 
+const Courses = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState('all');
+  const [selectedLevel, setSelectedLevel] = useState('all');
+  const [filteredCourses, setFilteredCourses] = useState([]);
+
   useEffect(() => {
     let filtered = courses;
 
@@ -154,6 +154,10 @@ const Courses = () => {
         className={`star ${i < Math.floor(rating) ? 'filled' : ''}`}
       />
     ));
+  };
+
+  const handleDownload = async (course) => {
+    await downloadService.downloadCourse(course.id, course.title);
   };
 
   return (
@@ -276,7 +280,10 @@ const Courses = () => {
                     Start Course
                   </Link>
                   {course.isOffline && (
-                    <button className="btn btn-secondary course-btn">
+                    <button 
+                      className="btn btn-secondary course-btn"
+                      onClick={() => handleDownload(course)}
+                    >
                       <Download className="btn-icon" />
                       Download
                     </button>
