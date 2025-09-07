@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const LanguageContext = createContext();
 
@@ -17,6 +17,8 @@ const translations = {
     courses: 'Courses',
     progress: 'Progress',
     about: 'About',
+    quizzes: 'Quizzes',
+    downloads: 'Downloads',
     
     // Common
     startLearning: 'Start Learning',
@@ -30,11 +32,21 @@ const translations = {
     online: 'Online',
     
     // Home Page
-    heroTitle: 'Empowering Rural Education in',
+    heroTitle: 'Empowering Rural Education in Nabha',
     heroDescription: 'A comprehensive digital learning platform designed specifically for rural school students. Access quality education, interactive content, and progress tracking - all in your local language.',
     students: 'Students',
     coursesCount: 'Courses',
     schools: 'Schools',
+    whyChoosePlatform: 'Why Choose Our Platform?',
+    designedForRuralStudents: 'Designed specifically for rural students with unique needs and challenges',
+    exploreSubjects: 'Explore Subjects',
+    comprehensiveCurriculum: 'Comprehensive curriculum covering all major subjects',
+    whatStudentsSay: 'What Students Say',
+    realFeedback: 'Real feedback from students using our platform',
+    readyToStartLearning: 'Ready to Start Learning?',
+    joinHundreds: 'Join hundreds of students in Nabha who are already using our platform to improve their education.',
+    getStartedToday: 'Get Started Today',
+    demoEngagingContent: 'Engaging content for all subjects',
     
     // Features
     interactiveLearning: 'Interactive Learning',
@@ -75,8 +87,6 @@ const translations = {
     courseStatistics: 'Course Statistics',
     lessons: 'Lessons',
     duration: 'Duration',
-    students: 'Students',
-    offlineAccess: 'Offline Access',
     downloadCourse: 'Download Course',
     
     // Quiz
@@ -131,6 +141,8 @@ const translations = {
     courses: 'कोर्स',
     progress: 'प्रगति',
     about: 'हमारे बारे में',
+    quizzes: 'क्विज़',
+    downloads: 'डाउनलोड्स',
     
     // Common
     startLearning: 'सीखना शुरू करें',
@@ -149,6 +161,16 @@ const translations = {
     students: 'छात्र',
     coursesCount: 'कोर्स',
     schools: 'स्कूल',
+    whyChoosePlatform: 'हमारा प्लेटफॉर्म क्यों चुनें?',
+    designedForRuralStudents: 'ग्रामीण छात्रों की विशिष्ट आवश्यकताओं और चुनौतियों के लिए विशेष रूप से डिज़ाइन किया गया',
+    exploreSubjects: 'विषयों का अन्वेषण करें',
+    comprehensiveCurriculum: 'सभी प्रमुख विषयों को कवर करने वाला व्यापक पाठ्यक्रम',
+    whatStudentsSay: 'छात्र क्या कहते हैं',
+    realFeedback: 'हमारे प्लेटफॉर्म का उपयोग करने वाले छात्रों की वास्तविक प्रतिक्रिया',
+    readyToStartLearning: 'सीखना शुरू करने के लिए तैयार?',
+    joinHundreds: 'नाभा के सैकड़ों छात्रों के साथ जुड़ें जो पहले से ही हमारी मदद से अपनी शिक्षा सुधार रहे हैं।',
+    getStartedToday: 'आज ही शुरू करें',
+    demoEngagingContent: 'सभी विषयों के लिए आकर्षक सामग्री',
     
     // Features
     interactiveLearning: 'इंटरैक्टिव लर्निंग',
@@ -188,6 +210,8 @@ const translations = {
     courses: 'ਕੋਰਸ',
     progress: 'ਤਰੱਕੀ',
     about: 'ਸਾਡੇ ਬਾਰੇ',
+    quizzes: 'ਕੁਇਜ਼',
+    downloads: 'ਡਾਉਨਲੋਡਸ',
     
     // Common
     startLearning: 'ਸਿੱਖਣਾ ਸ਼ੁਰੂ ਕਰੋ',
@@ -206,6 +230,16 @@ const translations = {
     students: 'ਵਿਦਿਆਰਥੀ',
     coursesCount: 'ਕੋਰਸ',
     schools: 'ਸਕੂਲ',
+    whyChoosePlatform: 'ਸਾਡਾ ਪਲੇਟਫਾਰਮ ਕਿਉਂ ਚੁਣੋ?',
+    designedForRuralStudents: 'ਪੇਂਡੂ ਵਿਦਿਆਰਥੀਆਂ ਦੀਆਂ ਖਾਸ ਜ਼ਰੂਰਤਾਂ ਅਤੇ ਚੁਣੌਤੀਆਂ ਲਈ ਤਿਆਰ ਕੀਤਾ ਗਿਆ',
+    exploreSubjects: 'ਵਿਸ਼ਿਆਂ ਦੀ ਖੋਜ ਕਰੋ',
+    comprehensiveCurriculum: 'ਸਾਰੇ ਮੁੱਖ ਵਿਸ਼ਿਆਂ ਨੂੰ ਕਵਰ ਕਰਨ ਵਾਲਾ ਵਿਸਤ੍ਰਿਤ ਕੋਰਸ',
+    whatStudentsSay: 'ਵਿਦਿਆਰਥੀ ਕੀ ਕਹਿੰਦੇ ਹਨ',
+    realFeedback: 'ਸਾਡੇ ਪਲੇਟਫਾਰਮ ਨੂੰ ਵਰਤਣ ਵਾਲੇ ਵਿਦਿਆਰਥੀਆਂ ਤੋਂ ਅਸਲ ਫੀਡਬੈਕ',
+    readyToStartLearning: 'ਸਿੱਖਣਾ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਤਿਆਰ?',
+    joinHundreds: 'ਨਾਭਾ ਦੇ ਸੈਂਕੜਿਆਂ ਵਿਦਿਆਰਥੀਆਂ ਨਾਲ ਜੁੜੋ ਜੋ ਪਹਿਲਾਂ ਹੀ ਸਾਡਾ ਪਲੇਟਫਾਰਮ ਵਰਤ ਕੇ ਆਪਣੀ ਸਿੱਖਿਆ ਸੁਧਾਰ ਰਹੇ ਹਨ।',
+    getStartedToday: 'ਅੱਜ ਹੀ ਸ਼ੁਰੂ ਕਰੋ',
+    demoEngagingContent: 'ਸਾਰੇ ਵਿਸ਼ਿਆਂ ਲਈ ਦਿਲਚਸਪ ਸਮਗਰੀ',
     
     // Features
     interactiveLearning: 'ਇੰਟਰਐਕਟਿਵ ਸਿੱਖਣ',
@@ -242,6 +276,18 @@ const translations = {
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState('en');
+
+  // Load preferred language on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('preferredLanguage');
+      if (saved && translations[saved]) {
+        setLanguage(saved);
+      }
+    } catch (err) {
+      // ignore storage errors
+    }
+  }, []);
 
   const t = (key, params = {}) => {
     let translation = translations[language][key] || translations['en'][key] || key;

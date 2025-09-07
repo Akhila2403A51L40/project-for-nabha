@@ -5,45 +5,48 @@ import {
   Users, 
   Award, 
   Globe, 
-  Play, 
   ArrowRight,
   Star,
-  CheckCircle,
   TrendingUp
 } from 'lucide-react';
 import './Home.css';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const Home = () => {
+  const { t } = useLanguage();
+  useAuth();
+
   const features = [
     {
       icon: <BookOpen className="feature-icon" />,
-      title: "Interactive Learning",
-      description: "Engaging multimedia content designed for rural students"
+      title: t('interactiveLearning'),
+      description: t('interactiveLearningDesc')
     },
     {
       icon: <Globe className="feature-icon" />,
-      title: "Offline Access",
-      description: "Download content for learning without internet connection"
+      title: t('offlineAccess'),
+      description: t('offlineAccessDesc')
     },
     {
       icon: <Users className="feature-icon" />,
-      title: "Community Support",
-      description: "Connect with teachers and fellow students"
+      title: t('communitySupport'),
+      description: t('communitySupportDesc')
     },
     {
       icon: <Award className="feature-icon" />,
-      title: "Progress Tracking",
-      description: "Monitor your learning journey with detailed analytics"
+      title: t('progressTracking'),
+      description: t('progressTrackingDesc')
     }
   ];
 
   const subjects = [
-    { name: "Mathematics", color: "#3b82f6", icon: "🔢" },
-    { name: "Science", color: "#10b981", icon: "🔬" },
-    { name: "English", color: "#f59e0b", icon: "📚" },
-    { name: "Hindi", color: "#ef4444", icon: "📖" },
-    { name: "Punjabi", color: "#8b5cf6", icon: "✍️" },
-    { name: "Social Studies", color: "#06b6d4", icon: "🌍" }
+    { name: t('mathematics'), slug: 'mathematics', color: "#3b82f6", icon: "🔢" },
+    { name: t('science'), slug: 'science', color: "#10b981", icon: "🔬" },
+    { name: t('english'), slug: 'english', color: "#f59e0b", icon: "📚" },
+    { name: t('hindi'), slug: 'hindi', color: "#ef4444", icon: "📖" },
+    { name: t('punjabi'), slug: 'punjabi', color: "#8b5cf6", icon: "✍️" },
+    { name: t('socialStudies'), slug: 'social-studies', color: "#06b6d4", icon: "🌍" }
   ];
 
   const testimonials = [
@@ -74,36 +77,31 @@ const Home = () => {
         <div className="container">
           <div className="hero-content">
             <div className="hero-text">
-              <h1 className="hero-title">
-                Empowering Rural Education in 
-                <span className="highlight"> Nabha</span>
-              </h1>
+              <h1 className="hero-title">{t('heroTitle')}</h1>
               <p className="hero-description">
-                A comprehensive digital learning platform designed specifically for rural school students. 
-                Access quality education, interactive content, and progress tracking - all in your local language.
+                {t('heroDescription')}
               </p>
               <div className="hero-actions">
                 <Link to="/courses" className="btn btn-primary hero-btn">
-                  <Play className="btn-icon" />
-                  Start Learning
+                  {t('startLearning')}
                 </Link>
                 <Link to="/about" className="btn btn-secondary hero-btn">
-                  Learn More
+                  {t('learnMore')}
                   <ArrowRight className="btn-icon" />
                 </Link>
               </div>
               <div className="hero-stats">
                 <div className="stat">
                   <span className="stat-number">500+</span>
-                  <span className="stat-label">Students</span>
+                  <span className="stat-label">{t('students')}</span>
                 </div>
                 <div className="stat">
                   <span className="stat-number">50+</span>
-                  <span className="stat-label">Courses</span>
+                  <span className="stat-label">{t('coursesCount')}</span>
                 </div>
                 <div className="stat">
                   <span className="stat-number">15+</span>
-                  <span className="stat-label">Schools</span>
+                  <span className="stat-label">{t('schools')}</span>
                 </div>
               </div>
             </div>
@@ -119,8 +117,8 @@ const Home = () => {
                 <div className="card-content">
                   <div className="learning-demo">
                     <BookOpen className="demo-icon" />
-                    <h3>Interactive Learning</h3>
-                    <p>Engaging content for all subjects</p>
+                    <h3>{t('interactiveLearning')}</h3>
+                    <p>{t('demoEngagingContent')}</p>
                   </div>
                 </div>
               </div>
@@ -133,10 +131,8 @@ const Home = () => {
       <section className="features">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">Why Choose Our Platform?</h2>
-            <p className="section-description">
-              Designed specifically for rural students with unique needs and challenges
-            </p>
+            <h2 className="section-title">{t('whyChoosePlatform')}</h2>
+            <p className="section-description">{t('designedForRuralStudents')}</p>
           </div>
           <div className="features-grid">
             {features.map((feature, index) => (
@@ -156,16 +152,14 @@ const Home = () => {
       <section className="subjects">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">Explore Subjects</h2>
-            <p className="section-description">
-              Comprehensive curriculum covering all major subjects
-            </p>
+            <h2 className="section-title">{t('exploreSubjects')}</h2>
+            <p className="section-description">{t('comprehensiveCurriculum')}</p>
           </div>
           <div className="subjects-grid">
             {subjects.map((subject, index) => (
               <Link 
                 key={index} 
-                to={`/courses?subject=${subject.name.toLowerCase()}`}
+                to={`/courses?subject=${subject.slug}`}
                 className="subject-card"
                 style={{ '--subject-color': subject.color }}
               >
@@ -184,10 +178,8 @@ const Home = () => {
       <section className="testimonials">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">What Students Say</h2>
-            <p className="section-description">
-              Real feedback from students using our platform
-            </p>
+            <h2 className="section-title">{t('whatStudentsSay')}</h2>
+            <p className="section-description">{t('realFeedback')}</p>
           </div>
           <div className="testimonials-grid">
             {testimonials.map((testimonial, index) => (
@@ -213,15 +205,13 @@ const Home = () => {
         <div className="container">
           <div className="cta-content">
             <div className="cta-text">
-              <h2 className="cta-title">Ready to Start Learning?</h2>
-              <p className="cta-description">
-                Join hundreds of students in Nabha who are already using our platform to improve their education.
-              </p>
+              <h2 className="cta-title">{t('readyToStartLearning')}</h2>
+              <p className="cta-description">{t('joinHundreds')}</p>
             </div>
             <div className="cta-actions">
               <Link to="/courses" className="btn btn-primary cta-btn">
                 <TrendingUp className="btn-icon" />
-                Get Started Today
+                {t('getStartedToday')}
               </Link>
             </div>
           </div>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, Menu, X, Globe, User, Trophy, Download, HelpCircle } from 'lucide-react';
+import { BookOpen, Menu, X, Globe, User, Trophy, Download, HelpCircle, LogOut } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 import { downloadManager } from '../utils/downloadManager';
 import './Header.css';
 
@@ -10,6 +11,7 @@ const Header = () => {
   const [downloadCount, setDownloadCount] = useState(0);
   const location = useLocation();
   const { language, changeLanguage, t } = useLanguage();
+  const { isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const updateDownloadCount = () => {
@@ -85,7 +87,7 @@ const Header = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               <HelpCircle className="nav-icon" />
-              Quizzes
+              {t('quizzes')}
             </Link>
             <Link 
               to="/downloads" 
@@ -93,7 +95,7 @@ const Header = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               <Download className="nav-icon" />
-              Downloads
+              {t('downloads')}
               {downloadCount > 0 && (
                 <span className="download-badge">{downloadCount}</span>
               )}
@@ -121,9 +123,17 @@ const Header = () => {
                 {language === 'en' ? 'हिंदी' : language === 'hi' ? 'ਪੰਜਾਬੀ' : 'English'}
               </span>
             </button>
-            <button className="user-menu" title="User Profile">
-              <User className="icon" />
-            </button>
+            {isAuthenticated ? (
+              <button className="user-menu" title="Logout" onClick={logout}>
+                <LogOut className="icon" />
+              </button>
+            ) : (
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Link to="/auth" className="user-menu" title="Login / Sign Up">
+                  <User className="icon" />
+                </Link>
+              </div>
+            )}
             <button 
               className="mobile-menu-toggle"
               onClick={toggleMenu}
